@@ -1,0 +1,1200 @@
+package ds.arrays;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
+
+import javax.swing.text.StyleContext.SmallAttributeSet;
+
+
+public class ArrayProblems {
+	
+	/**************** section 2: From GeeksForGeeks***************************************************/	
+	//CASE 1: DELETE ELEMENT FROM ARRAY**********************************88
+	public void deleteElementUsingListAndArray(int[] inputArray,int element){
+		// DELETE USING COPY ARRAY
+		List list = new ArrayList();
+		for(int i=0;i<inputArray.length;i++){
+			list.add(inputArray[i]);
+		}
+		
+		Iterator itr = list.iterator();
+		
+		// DELETE USING ITERATOR
+		while(itr.hasNext()){
+			int ele = (Integer)itr.next();
+			if(ele == element){
+				itr.remove();
+			}
+		}
+		
+		// DELETE USING LINKEDLIST
+		int listSize = list.size();
+		for(int i=0;i<listSize-1;i++){
+			if(list.get(i).equals(element))
+				list.remove(i);
+		}
+	
+		
+		
+		Object[] resArray = list.toArray();
+		
+		for(Object i : resArray){
+			System.out.println(" " + (Integer)i);
+		}
+	}
+	
+	// JUSR REPLACES THE ELEMENTS BUT NOT SHRINKS THE array as such
+	public void deleteElement(int[] inputArray,int element){
+		
+		int size = inputArray.length;
+		
+		int index = findElement(inputArray, element);
+		if(index==-1)
+			return;
+		int i = 0;
+		for(i=index;i<size-1;i++){//1,2,3,4,5,6,7,8,9
+			inputArray[i] = inputArray[i+1];// use i+1 and NOT i++;
+		}
+		i=0;
+		int[] newArray = new int[size-2];//  created new array to pass the modified values: O(n) space and O(n) time complexity
+		for(i=0;i<size-2;i++){
+			newArray[i] = inputArray[i];
+		}
+		for(i=0;i<newArray.length;i++){
+			System.out.print(" " + i);
+			System.out.println(" "+  newArray[i]);
+		}
+		return;
+		
+	}
+	
+	private int findElement(int[] inputArray,int element){
+		
+		for(int i=0;i<inputArray.length;i++){
+			if(inputArray[i]==element)
+				return i;
+		}
+		
+		
+		return -1;
+	}
+	
+	
+	//case 2: in sorted array
+	
+	public void searchInSortedArray(int[] inputArray,int element){
+		int size = inputArray.length;
+		if(element > inputArray[size-1] || element < inputArray[0])
+		{
+			System.out.println(" Not found");
+			return;
+		}
+		
+		searchInSortedArray(inputArray,0,size-1,element);
+	}
+	
+	
+	private void searchInSortedArray(int[] inputArray,int low, int high, int element){
+		int mid = (high+low)/2;
+		if(high < low)
+			return;
+		if(inputArray[mid] == element){
+			System.out.println(" Element found at index " + mid);
+		  	return;
+		}
+		if(element < inputArray[mid])
+			searchInSortedArray(inputArray, low, mid-1, element);
+		else
+			searchInSortedArray(inputArray, mid+1, high, element);
+		if(low==high)
+		{
+			System.out.println(" Not found ...");
+		}
+	 return;	
+	}
+	/*******case2******** ends here******************/
+	
+	
+	
+	
+	//case 3: Find pair with given sum 
+	
+	// 3.a using HashMap
+	public boolean findPair(int[] arr, int sum){
+		
+	   Map<Integer,Integer> mp = new HashMap<>();
+	   for(int i=0;i<arr.length;i++){
+		   mp.put(i, i);
+	   }
+	   
+	   for(int i=0;i<arr.length;i++){
+	   if(mp.containsValue(sum-i))
+		   return true;
+	   }
+	   return false;
+		
+	}
+	
+	
+	//3.b using HashSet
+	public boolean findIfPairExists(int[] arr, int sum){
+		
+		boolean[] temp = new boolean[100];
+		
+		for(int i=0;i<arr.length;i++){
+			
+			 if(sum-arr[i]>=0 && temp[sum-arr[i]]==true) // sum-arr[i] >=0 as the value at index i in arr could either be equal or smaller than the sum
+				 return true;
+			 
+			 temp[arr[i]] = true;
+		}
+		return false;
+	}
+	
+	/************** case 3 ***************** ends here *****************/
+	
+	//CASE 4. Find the Number appearing Odd number of times
+	public int findOddAppearingNumber(int[] arr){
+		int res = 0;
+		for(int i=0;i<arr.length;i++){
+			res = res ^ arr[i];
+		}
+		
+		if(res!=0)
+			return res;
+		return -1;
+	}
+	
+	
+	// CASE 5: Contigious Array with lagest Sum
+	
+	/*public int largestContigousSum(int[] arr){
+		int max = 0;
+		int temp = 0;
+		for(int i=0;i<arr.length-1;i++){ // 1 2 -3 10
+			temp +=arr[i];
+			if(temp > max)
+				max = temp;
+			else
+				temp = arr[i+1];
+		}
+		return max;
+	}*/
+	
+	
+	// CASE 6: FIND MISSING IN A GIVEN RANGE
+	public int findMissing(int[] arr,int size){
+		int arrSum = 0;
+		for(int i=0;i<size-1;i++){
+			arrSum ^= arr[i];
+		}
+		
+		int naturalSum = 0;
+		for(int i=1;i<=size;i++){
+			naturalSum ^= i;
+		}
+		
+		return arrSum^naturalSum;
+	}
+	
+	// CASE 7: Search an element is a rotated Array
+	
+	public void searchInRotated(int[] arr,int element){  //  4 5 6 7 8 9 1 2 3
+		if(arr[0]<arr[arr.length-1])
+		{
+			System.out.println(" Not a rotated array ");
+			seachInArray(arr,0,arr[arr.length-1],element);
+		}else{
+			seachInArray(arr,0,arr[arr.length-1],element);
+		}
+	}
+	
+	private void shiftValues(int[] arr,int i, int n){
+		//int i=j;
+		for(;i<arr.length-1;i++){
+			arr[i] = arr[i+1];
+		}
+		arr[i] = -1;
+		/*for(int i=n;i<arr.length;i++){
+			arr[arr.length-1] = -1;
+		}*/
+		
+	}
+
+	// CASE 8: Merge two Arrays
+	public void mergeTwoarrays(int[] first,int[] second, int m, int n){
+		for(int i=0;i<first.length;i++){ //2, 8, NA, NA, NA, 13, NA, 15, 20
+			if(i==(m-n))break;
+			if(first[i]==-1){  // 2 3 4 -1 5 -1 6
+				while(first[i]==-1)
+				shiftValues(first, i , n);
+				continue;
+			}
+		}
+		System.out.println(" after ");
+		for(int num : first){
+		System.out.print(" " + num);
+		}
+		merge(first,second,m,n);
+	}
+	
+	
+	private void merge(int[] first,int[] second,int m,int n){
+		int i=0;
+		int j = 0;
+		while(i<(m-n)){
+			if(first[i]<second[j]){
+				i++;
+			}else{
+				swap(first,second,i,j);
+				i++;
+			}
+		}
+		
+		j=0;
+		for(i=(m-n);i<first.length;i++){
+			first[i]=second[j];
+			j++;
+		}
+		
+		System.out.println(" Result is ");
+		for(int ele : first){
+			System.out.print(" "+ ele);
+		}
+		
+		
+	}
+	
+	
+	private void swap(int[] first,int[] second, int i, int j){
+		int temp = first[i];
+		 first[i] = second[j];
+		 second[j] = temp;
+		
+	}
+	
+	public void seachInArray(int[] arr,int low, int high, int element){
+		int mid = (high+low)/2;
+		if(arr[mid]==element){
+			System.out.println("Element found at index " + mid);
+			return;
+		}
+		if(arr[mid]>element)
+			searchInSortedArray(arr, low, mid-1, element);
+		searchInSortedArray(arr, mid+1, high, element);
+		
+		if(high<=low){
+			System.out.println(" Element NOT found ");
+			return;
+		}
+	}
+	
+	
+	public void reverseArray(int[] arr){// 1 2 3 4 5 6 
+		int i = 0;
+		int j = arr.length-1;
+		while(i!=j && j >= i){
+			swap(arr,i,j);
+			i++;j--;
+		}
+		System.out.println("After sorting ");
+		for(int num : arr){
+			System.out.print(" " + num);
+		}
+	}
+	
+	private void swap(int[] arr, int i,int j){
+		int temp=arr[i];
+		arr[i]=arr[j];
+		arr[j]=temp;
+	}
+
+	
+	/**** reverse array recursively*/
+	public void reverserecursively(int[] arr){
+		reverseRec(arr,0,arr.length-1);
+		
+	}
+	
+	private void reverseRec(int[] arr,int start,int end){ // 1 2 3 4 5 6 7
+		if(start>=end)
+			return;
+		int temp=arr[start];
+		arr[start]=arr[end];
+		arr[end]=temp;
+		reverseRec(arr, start+1, end-1);
+	}
+	
+	/************* Ending case 7 ****************************/
+	
+	
+	/************ case 8 ************/
+	public void rotatebyNum(int[] arr,int d){
+		
+		for(int i=0;i<d;i++){
+			int temp = arr[0];
+			int j=0;
+			for(;j<arr.length-1;j++){
+				arr[j] = arr[j+1];
+			}
+			arr[j]=temp;
+		}
+	}
+	
+	/*** case 9: maximum sum with no two adjacent
+	 *///TO DO
+	/*public int findMaxSumWihNoTwoAdjacent(int[] arr){// 1 2 3 4 5 6
+		int start = Math.max(arr[0], arr[1]);
+		int sum = start;
+		int i;
+		if(arr[0]==start)
+			i = 0;
+		else
+			i = 1;
+		for(;i<arr.length-2;){
+			
+				if(arr[i+1]>arr[i+2]){
+					sum -= arr[i];
+					sum +=arr[i+1];
+					i = i+2;
+				}else{
+					if(arr[i+1]+arr[i+3]>arr[i+2]){
+						sum += arr[i+3];
+					    i = i+5;	
+					}
+					else
+						sum +=arr[i+2];
+					i = i+2;
+				}
+		}
+		return sum;
+	}*/
+	
+	/* CASE 10 : To find leaders in array /
+	 * 
+	 */
+	public void leadersInArray(int[] arr){
+		
+		StringBuffer str = new StringBuffer();
+		
+		
+		int localMin = arr[arr.length-1];
+		str.append(localMin);
+		
+		//str.append(" "+localMin);
+		
+		for(int i=arr.length-2;i>=0;i--){
+			if(arr[i]>localMin){
+				str.append(" "+arr[i]);
+				localMin = arr[i];
+			}
+		}
+		
+		System.out.println(" leaders are " + str);
+		
+	}
+
+	
+	/* case 11: Sort the elements by frequency
+	/* 
+	 * 
+	 */
+	
+	public void sortByFrequency(int[] arr){
+		Map<Integer,Integer> mp = new TreeMap<>();
+		ArrayList<Integer> listOfArrays = new ArrayList<>();
+		for(int i=0;i<arr.length;i++){
+			if(mp.containsKey(arr[i]))
+				mp.put(arr[new Integer(i)], mp.get(arr[new Integer(i)])+1);
+			else
+				mp.put(arr[i], 1);
+		}
+		
+		for(Map.Entry<Integer,Integer> st : mp.entrySet()){
+			System.out.println(" "+ st.getKey() +" "+ st.getValue());
+			//int i=st.getValue();
+			for(int i=0;i<st.getValue();i++){
+				listOfArrays.add(st.getKey());
+			}
+		}
+		
+		System.out.println(" Result array is "+ listOfArrays);
+	}
+
+	
+	//case : find two numbers closest to zero
+	public void closeToZerosum(int[] arr){ //1, 60, -10, 70, -80, 85
+		 int min = Integer.MAX_VALUE;
+		 Arrays.sort(arr);
+		 int i=0;
+		 int j = arr.length-1;
+		 while(i<j){
+			 int sum = arr[i]+arr[j];
+			 if(sum>0){
+				 j--;
+			 }
+			 else{
+				 i++;
+			 }
+			 if(Math.abs(min)>Math.abs(sum))
+				 min = sum;
+		 }
+		 System.out.println(" Min is " + min);
+	}
+	
+	
+	//case smaller and smallest number in array
+	public void findSmallerAndSmallest(int[] arr){
+		int smallest;
+		int small;
+		if(arr[0]>arr[1]){
+			small = arr[0];
+			smallest = arr[1];
+		}else{
+			small = arr[1];
+			smallest = arr[0];
+		}
+		for(int i=2;i<arr.length;i++){
+			if(arr[i]<smallest){
+				small = smallest;
+				smallest = arr[i];
+			}else if(arr[i]<small && arr[i]!=smallest){
+				small = arr[i];
+			}
+		}
+		System.out.println(" Smallest " + smallest+" "+ "small " + small);	
+	}
+
+	
+	// case Check majority element in array
+	public int checkMajorityElement(int[] arr){
+		
+		Arrays.sort(arr);
+		
+		if(arr[arr.length/2]==arr[arr.length/2+1])
+			return arr[arr.length/2];
+		return -1;
+		
+	}
+	
+	// case" segregate 0s and 1s
+	public void segregateOnesZeros(int[] arr){
+		int count = 0;
+		//int k = 0;
+		for(int i=0;i<arr.length;i++){
+			if(arr[i]==0){
+				arr[count] = 0;
+			//	k++;
+				count++;
+			}
+		}
+		while(count<=arr.length-1){
+			arr[count++] = 1;
+		}
+		for(int num : arr)
+			System.out.print(" " + num);
+	}
+	
+	// case: maximum diff with larger element on right side
+	public void maximumDiff(int[] arr){
+		int max= arr[arr.length-1];
+		int i=arr.length-2;
+		while(i>0){
+			if(arr[i]>max){
+				max = arr[i];
+			}
+			i--;
+		}
+		
+		int min = arr[0];
+		int j = 0;
+		while(j<arr.length && arr[j]!=max){
+			if(arr[j]<min){
+				min = arr[j];
+			}
+			j++;	
+		}
+		System.out.println(" Maximum difference is " + (max - min));
+	}
+	
+	// case: Insertion and union of sorted array
+	
+	public void arrayUnion(int[] first, int[] second){
+		
+		int i=0,j=0;
+		int firstSize = first.length;
+		int secSize = second.length;
+		int k =0;
+		int resultArray[] = new int[firstSize + secSize -2 ];
+		
+		while(i<firstSize && j<secSize){
+		  if(first[i]==second[j]){
+			  resultArray[k++] = first[i];
+			  i++;j++;  
+		  } 
+		  else if(first[i]<second[j]){
+				  resultArray[k++] = first[i];
+				  i++;
+		  }else if(first[i]>second[j]){
+				  resultArray[k++] = second[j];
+				  j++;
+		  }else
+			  break;
+		}
+		if(i<firstSize)
+			resultArray[k++] = first[i++];
+		if(j<secSize)
+			resultArray[k++] = second[j++];
+		
+		for(int ele : resultArray){
+			System.out.println(" "+ ele);
+		}
+	}
+	
+	// TO DO
+	/*public void findCeilingAndFloorInSorted(int[] arr, int x){
+		
+		if(arr.length <=1){
+			System.out.println(" No Ceiling and Floor value ");
+			return;
+		}
+		
+		findCeilingAndFloor(arr,0,arr.length-1,x);
+	}
+	
+	
+	private void findCeilingAndFloor(int[] arr,int low, int high, int x){
+		int mid = (low+ high)/2;
+		if(arr[mid]==x){
+			System.out.println(" Ceiling => "+ arr[mid]+" "+ " floor is => " + arr[mid]);
+			return;
+		}
+		if(arr[mid] !=x)
+		{
+			if(arr[mid]>x && arr[mid-1]<x)
+				System.out.println(" Ceiling => "+ arr[mid]+" "+ " floor is => " + arr[mid-1]);
+			else if(arr[mid]<x && arr[mid-1]>x)
+				System.out.println(" Ceiling => "+ arr[mid-1]+" "+ " floor is => " + arr[mid]);	
+			return;
+		}
+		if(arr[mid]<x){
+			findCeilingAndFloor(arr, mid+1, high, x);
+		}else
+			findCeilingAndFloor(arr, low, mid-1, x);
+		
+	}
+*/
+	
+	//case : segregte Odd and Even Numbers;
+	public void segregateOddAndEven(int[] arr){
+		int k =0;
+		int m = arr.length-1;
+		
+		int[] temp = new int[arr.length];
+		for(int i=0;i<arr.length;i++){
+			if(arr[i]%2==0)
+				temp[k++] = arr[i];
+			else
+				temp[m--] = arr[i];
+		}
+		
+		for(int ele : temp){
+			System.out.print(" " + ele);
+		}
+	}
+	
+	
+	// case : sort 0 , 1 and 2s
+	public void dutchFlagProb(int[] arr){
+		int i = 0;
+		int m = 0;
+		int j = arr.length-1;
+		while(m<=j){
+			if(arr[m]==0){
+				swapVal(arr,i,m);
+				i++;
+				m++;
+			}else if(arr[m]==1){
+				m++;
+			}else if(arr[m]==2){
+				swapVal(arr,j,m);
+				j--;
+			}
+		}
+		for(int k : arr){
+			System.out.print(" " + k);
+		}
+	}
+	
+	
+	// case : Find Duplicate in array in given range
+	public void findDuplicates(int[] arr){
+		for(int i=0;i<arr.length;i++){
+			if(arr[Math.abs(arr[i])]<0)
+				System.out.println(" Repeting number is " + Math.abs(arr[i]));
+			else{
+				arr[Math.abs(arr[i])] = -arr[Math.abs(arr[i])];
+			}
+		}
+	}
+	
+	
+	private void swapVal(int[] arr, int i, int j){
+		int temp = arr[i];
+		arr[i] = arr[j];
+		arr[j] = temp;
+	}
+	
+	//case : Equilibrium index
+	public void findEquilibriumIndex(int[] arr){// 1 2 3 4 5 6
+		int size = arr.length;
+		int i=1;
+		while(i<size-1){
+			int leftSum=0;
+			for(int k=0;k<i;k++){
+				leftSum +=arr[k];
+			}
+			int rightSum=0;
+			for(int j=i+1;j<arr.length;j++){
+				rightSum +=arr[j];
+			}
+			
+			if(leftSum == rightSum)
+				System.out.println(" Index is ==> " + i);
+			i++;
+		}
+		System.out.println(" No Equilibrium Index found ");
+		return;
+	}
+	
+	// case: Next greater element
+	public void nextGreaterElement(int[] arr){// 2 3 23 5 67 32
+		int size = arr.length;
+		int max = arr[size-1];
+		int localMax = arr[size-1];
+		System.out.println(" NGE for element " + max +"  is " +  -1);
+		for(int i=size-2;i>=0;i--){
+			if(arr[i]<localMax){
+				 System.out.println(" NGE for element " + arr[i] +"  is " +  localMax);
+				 localMax = arr[i];
+			}else if(arr[i]> max){
+				System.out.println(" NGE for element " + arr[i] +"  is " +  -1);
+			}
+			else{
+				  System.out.println(" NGE for element " + arr[i] +"  is " +  max); 
+				  localMax = arr[i];
+				}
+			}
+		}
+	
+	
+	// case :find minimum number missing// TO DO
+	/*public int findSmallestMissing(int[] arr,int n){
+		if(arr[0]!=0)
+			return 0;
+		return findSmallest(arr,0,arr.length-1,n);
+	}
+
+	
+	private int findSmallest(int[] arr, int low, int high, int num){
+		
+		int mid = (low+high)/2;
+		
+		if(arr[mid]>mid)
+		 findSmallest(arr, low, mid-1, num);
+		else if(arr[mid]<mid)
+		  findSmallest(arr, mid+1, high, num);	
+		else 
+			return mid+1;
+		return -1;
+	}
+	*/
+	
+	
+	// case : find number of occurances of s number
+	/*public void findNumberOfOccurances(int[] arr,int number){
+		
+	   findOccurances(arr, number, 0, arr.length-1);	
+		
+	}
+	
+	private void findOccurances(int[] arr,int number,int low, int high){
+		int start = -1;
+		int end = -1;
+		
+		int mid = (low+high)/2;
+		while(low<high){
+		
+		if(arr[mid]==number && arr[mid+1]==number && arr[mid-1]==number)
+		{
+			findOccurances(arr, number, low, mid-1);
+			findOccurances(arr, number, mid+1, high);
+		} 
+		if(arr[mid]==number && (arr[mid+1]==number || arr[mid-1]==number)){
+			if(arr[mid+1]==number){
+				start = mid+1;
+				findOccurances(arr, number, start+1, high);
+			}
+			else{
+				end = mid-1;
+				findOccurances(arr, number, low, end-1);
+			}	
+		}
+		
+		if(start!=-1 && end != -1)
+			System.out.println(" occurancres count " + (end - start +1 ));
+			return;
+		}
+		
+		
+		
+		return;
+	}
+	*/
+	//  Find max in Increasing decreasing array
+	public void findMaxInIncrDecrArray(int[] arr){
+		if(arr.length==1)
+			System.out.println("Max element is " + arr[0]);
+		findMax(arr,0,arr.length-1);
+	}
+	
+	private void findMax(int[] arr, int low, int high) {
+		int mid = (low + high) / 2;
+		if (arr[1] < arr[0]) {
+			System.out.println(" Max element is===> " + arr[0]);
+			return;
+		}
+		if(arr[arr.length-1]>arr[arr.length-2])
+		{
+			System.out.println(" Max element is===> " + arr[arr.length-1]);
+			return;
+		}
+		if (low <= high && mid > 0 && (mid < arr.length - 1)) {
+			if ((arr[mid - 1] < arr[mid]) && (arr[mid] > arr[mid + 1])) { // 1 3
+				System.out.println(" Max element is " + arr[mid]);
+				return;
+			} else if ((arr[mid - 1] < arr[mid]) && (arr[mid] < arr[mid + 1]))
+				findMax(arr, mid + 1, high);
+			else if ((arr[mid - 1] > arr[mid]) && (arr[mid] > arr[mid + 1]))
+				findMax(arr, low, mid - 1);
+		} else {
+			System.out.println(" No max element ");
+			return;
+		}
+	}
+	// SOLVE THIS USING BST
+	//count smaller elements on right side
+	public void countSmallerElements(int[] arr){
+		int max = arr[arr.length-1];
+		int maxIndex = arr[arr.length-1];
+		int k = arr.length-2;
+		int res[] = new int[arr.length];
+		int sum = 0;
+		for(int i=k;i>=0;i--){//12, 1, 2, 3, 0, 11, 4
+			if(arr[i]>max){
+				sum += 1;
+				max = arr[i];
+				maxIndex = i;
+				res[i]= findNextMaxToRight(maxIndex,arr);
+			}else if(arr[i]<max){
+				res[i] = findNextMaxToRight(i,arr);
+			}
+		}
+		
+		for(int i=0;i<res.length;i++){
+			System.out.println("i= " + i+" "+" value= " + res[i]);
+		}
+		
+		return;
+	}
+	
+	private int findNextMaxToRight(int i,int[] arr){
+		int count = 0;
+		int num = arr[i];
+		while(i<arr.length-1){
+			if(arr[i+1]<num)
+				count +=1;
+			i++;
+		}
+		return count;
+	}
+
+	
+	// case: Minimum jumps to reach an end : TO DO
+	/*public void minimumJumpsForEnd(int[] arr){ //1, 3, 5, 8, 9, 2, 6, 7, 6, 8, 9
+		int[] temp = new int[arr.length];
+		for(int i=1;i<arr.length;i++){
+			for(int k=0;k<i;k++)
+				if(arr[k]+k>=i){
+					temp[i]= temp[k];
+				}else{
+					temp[i] = temp[i-1];
+				}
+					
+		}
+		System.out.println(" Number of jumps " + temp[arr.length-1]);
+	}*/
+	
+	
+	/// case : find subarray with given sum
+	public void continousSubArray(int[] arr,int num){ //1, 4, 0, 0, 3, 10, 5
+		int start=arr[0];
+		int end =0;
+		int sum = 0;
+		int k = 0;
+		for (int i = 0; i < arr.length; i++) {
+			if (sum < num) {
+				sum += arr[i];
+				end = i;
+			} else if (sum > num) {
+				while(sum>num){
+				sum -= arr[k];
+				k++;
+				}
+				if (num == sum) {
+					start = k;
+					System.out.println(" start => " + start + " "
+							+ " End is => " + end);
+				}
+			}
+		}
+		if(sum!=num)
+		System.out.println("No Matching subarray ");
+	}
+	
+	// Longest Increasing SubSequence
+	public void longestIncrSubSequence(int[] arr) {//1, 101, 2, 3, 100, 4, 5
+		int maxSum = 0;
+		int sum = 0;
+		for (int i=0; i < arr.length; i++) {
+			for (int j=0; j <=i; j++) {
+				if (arr[j] <= arr[i])
+					sum += arr[j];
+			}
+			if (sum > maxSum)
+				maxSum = sum;
+			sum = 0;
+		}
+		System.out.println(" Maximum sum is " + maxSum);
+	}
+	
+	
+	/*public void longestIncrSubSeqSize(int[] arr){
+		
+	}*/
+	
+	
+	// case: find triplet with a goiven sum// TO DO
+	/*public void findtripletWithSum(int[] arr,int sum){//12, 3, 4, 1, 6, 9
+		//Here using temp storage the compexity is O(n*n)
+		for(int i=0;i<arr.length-2;i++){
+			boolean[] tempArray = new boolean[1000];
+			int remaining = sum - arr[i];
+			for(int j=i;j<arr.length;j++){
+				if(tempArray[remaining - arr[j]])
+					System.out.println(" first " + arr[i]+" second is " + arr[j] +" third is " + tempArray[remaining - arr[j]]);
+				else
+					tempArray[j] = true;
+			}
+	
+		}
+		
+		/// using sorting , in O(nlogn)
+		
+	}*/
+	
+	// CASE : fIND SMALLEST POSITIVE MISSIG NUMBER:
+	public void findminPosMissing(int[] arr){//2, 3, -7, 6, 8, 1, -10, 15
+		int min = Integer.MAX_VALUE;
+		for(int i=0;i<arr.length;i++){
+			if(Math.abs(arr[i])<min)
+				min = arr[i];
+		}
+		
+		if(min!=1){
+			System.out.println(" minimum is default " + 1);
+			return;
+		}
+		
+		for(int i=0;i<arr.length;i++){
+			if(arr[i]>0){
+				if(arr[i]-min>1){
+					System.out.println(" minimum is default " + (min+1));
+					break;
+				}else{
+					min = arr[i];
+				}
+			}
+		}
+		
+	
+	}
+	
+	// Find Two numbers with Odd occurences in array
+			public void findOddOccurancesInArray(int[] arr){ //12, 23, 34, 12, 12, 23, 12, 45
+			 
+				
+				
+				
+			}
+			
+			
+ //Find longest bitonic Subsequrnce
+			public void findLongestBitonic(int[] arr){
+				int lis = longestIncreasing(arr);
+				int lds = longestDecreasing(arr);
+				System.out.println(" Bitonic SubSeqnce is " + (lis+lds-1));
+			}
+			
+			private int longestIncreasing(int[] arr){
+				int max = arr[0];
+				int count = 1;
+				for(int i=0;i<arr.length;i++){
+					if(arr[i]>max){
+						max = arr[i];
+						count++;
+					}
+				}
+				return  count;
+			}
+			
+			private int longestDecreasing(int[] arr){
+				int max = arr[arr.length-1];
+				int count = 1;
+				for(int i=arr.length-1;i>=0;i--){
+					if(arr[i]>max){
+						max = arr[i];
+						count++;
+					}
+				}
+				return  count;
+			}
+
+			
+// largest sub array with eqiual 0 and 1
+			public void equalZeroOnesSubArray(int[] arr){
+				
+			}
+	
+	/**************** section 2: From Cracking the Coding Interview***************************************************/
+	
+	//case 1: Check if string has all uniquese characters
+	public boolean checkIfUnique(String input){
+		// if String is in ascaii code
+		if(input.length()>127)// First end case
+			return false;
+		
+		char[] inputArray = input.toCharArray();
+		
+		int[] resultArray = new int[128]; //to decrease the space complexity, use boolean Array boolean[] initialze to false
+		
+		for(int i=0;i<inputArray.length;i++){
+			if(resultArray[inputArray[i]] < 0)
+				return false;
+			resultArray[inputArray[i]] = - inputArray[i];
+		}
+		return true;
+	}
+	
+	// case2: Permutation of String
+	public boolean areTwoPermutation(String first,String second){
+		// create the count array
+		int[] lettersArray = new int[128];
+		char[] charArray = first.toCharArray();
+		for(int i=0;i<charArray.length;i++){
+			lettersArray[charArray[i]]++;
+		}
+		
+		charArray = second.toCharArray();
+		for(int i=second.length()-1;i>0;i--){
+			lettersArray[charArray[i]]--;
+			if(lettersArray[charArray[i]]<0)
+				return false;
+		}
+		return true;
+		
+	}
+	
+	// case3: Compress the String
+	public void compressString(String str){//aaabbcddeaa
+		StringBuffer resultString = new StringBuffer();
+		char[] charArray = str.toCharArray();
+		Map<Character,Integer> mp = new HashMap<>();
+		int count = 0;
+		for(int i=0;i<charArray.length;i++){
+			if(mp.containsKey(charArray[i]))
+				mp.put(charArray[i], mp.get(charArray[i])+1);
+			else
+				mp.put(charArray[i], 1);
+		}
+		
+	//	Set<Entry<Integer, Integer>> m = mp.entrySet();
+		for(Map.Entry<Character, Integer> st : mp.entrySet()){
+			if(st.getValue()!=0){
+				resultString.append(st.getValue()).append(st.getKey());
+			}
+		}
+		
+		System.out.println(" Compressed result is " + resultString.toString());
+	}
+	
+	// case 4: Rotate the Matrix
+	// case only handles the Square Matrix
+	public void rotateMatrix(int[][] matrix){
+		int noOfRows = matrix.length;
+		int noOfColumns = matrix[0].length;
+		
+		int temp;
+		for(int i=0;i<noOfRows;i++){
+			for(int j=0;j<noOfColumns;j++){
+				temp = matrix[i][j];
+				
+			}
+		}
+		
+		
+	}
+	
+	
+	
+	
+	public static void main(String args[]){
+		ArrayProblems  ref = new ArrayProblems();
+		int[] inputArray = {1, 2, 4, 5, 6, 7, 8 ,9, 10,12};
+		
+		//1. using element by using array as Auxiliary DS
+	  //  ref.deleteElement(inputArray, 7);
+		
+		System.out.println(" After deletion ");
+		
+		/*for(int element : inputArray){
+			System.out.println(" " + element);
+		}*/
+		//ref.searchRandomArray(inputArray);
+		
+		//ref.deleteElementUsingListAndArray(inputArray, 7);
+		
+		//ref.searchInSortedArray(inputArray, 5);
+		
+		
+	//	System.out.println(" Does it contaijs pair " + ref.findIfPairExists(inputArray, 5));
+		
+//	/	System.out.println(" odd times appearing is " + ref.findOddAppearingNumber(inputArray));
+		
+		//System.out.println(" largest contigous subarray " + ref.largestContigousSum(inputArray));
+		
+		//System.out.println(" Missing number is " + ref.findMissing(inputArray,inputArray.length));
+		
+		//ref.searchInRotated(inputArray, 8);
+		
+		int[] first = {2, 8, -1, -1, -1, 13, -1, 15, 20};
+		
+		int[] second = {5, 7, 9, 25};
+		
+		int[] arr = {2, 3, 10, 6, 4, 8, 1};
+		
+		//ref.mergeTwoarrays(first,second,first.length,second.length);
+		
+		//ref.reverseArray(arr);
+		
+		//ref.reverserecursively(arr);
+		
+		/*ref.rotatebyNum(arr, 3);
+		
+		for(int ele: arr){
+			System.out.print("-->" + ele);
+		}*/
+		
+		
+		
+		//System.out.println(" Ma x sum is " + ref.findMaxSumWihNoTwoAdjacent(arr));
+		
+		//ref.leadersInArray(arr);
+		
+		//ref.sortByFrequency(arr);
+		
+		//ref.closeToZerosum(arr);
+		
+		//ref.findSmallerAndSmallest(arr);
+		
+		
+		//System.out.println(" Majority element is " + ref.checkMajorityElement(arr));
+		
+		//ref.segregateOnesZeros(arr);
+		
+		// ref.maximumDiff(arr);
+		
+		
+		//System.out.println(" Is this uniques " + ref.checkIfUnique("Nidh"));
+		
+		
+		
+		//System.out.println(" are two permutations " + ref.areTwoPermutation("akkhil", "lihkaa"));
+		
+		//ref.compressString("aabcccccaaadddddddddddddeek");
+		int arr1[] = {1, 3, 4, 5, 7};
+		int arr2[] = {80, 60, 30, 40, 20, 10,3,5,1};
+		
+	//	ref.arrayUnion(arr1, arr2);
+		
+		//ref.findCeilingAndFloorInSorted(arr2, 5);
+		
+		//ref.segregateOddAndEven(arr2);
+		
+		//ref.dutchFlagProb(arr2);
+		
+		//ref.findDuplicates(arr2);
+		
+		//ref.findEquilibriumIndex(arr2);
+		
+		//ref.nextGreaterElement(arr2);
+		
+		//ref.findMimimumMissing(arr2, 10);
+		
+		//System.out.println(" Smallest Missing number is  " + ref.findSmallestMissing(arr2, 11));
+		
+		//ref.findNumberOfOccurances(arr2, 1);
+		
+		//ref.findMaxInIncrDecrArray(arr2);
+		//ref.countSmallerElements(arr2);
+		
+		//ref.minimumJumpsForEnd(arr2);
+		
+		//ref.continousSubArray(arr2, 33);
+		
+		
+		//ref.longestIncrSubSequence(arr2);
+		
+	//	ref.findtripletWithSum(arr2, 24);
+		
+	//	ref.findminPosMissing(arr2);
+		
+		ref.findLongestBitonic(arr2);
+	}
+	
+
+}
+
+/*********************** To do List ***************************/
+//1.http://www.geeksforgeeks.org/largest-sum-contiguous-subarray/
+//2. http://www.geeksforgeeks.org/merge-one-array-of-size-n-into-another-one-of-size-mn/
+//3 . http://www.geeksforgeeks.org/maximum-sum-such-that-no-two-elements-are-adjacent/	
+//4. Moore voting alorithm for: http://www.geeksforgeeks.org/check-for-majority-element-in-a-sorted-array/
+//5. Heap Question : http://www.geeksforgeeks.org/k-largestor-smallest-elements-in-an-array/ 
+//6:// http://www.geeksforgeeks.org/ceiling-in-a-sorted-array/
+//7. http://www.geeksforgeeks.org/equilibrium-index-of-an-array/(TO DO )
+// http://www.geeksforgeeks.org/find-the-first-missing-number/
+// http://www.geeksforgeeks.org/count-number-of-occurrences-or-frequency-in-a-sorted-array/
+// http://www.geeksforgeeks.org/count-smaller-elements-on-right-side/
+//http://www.geeksforgeeks.org/minimum-number-of-jumps-to-reach-end-of-a-given-array/
+//http://www.geeksforgeeks.org/implement-two-stacks-in-an-array/
+//http://www.geeksforgeeks.org/longest-monotonically-increasing-subsequence-size-n-log-n/( solution is nlogn)	
+// http://www.geeksforgeeks.org/find-a-triplet-that-sum-to-a-given-value/( SOLVE USING SORTING)
+//http://www.geeksforgeeks.org/find-the-two-numbers-with-odd-occurences-in-an-unsorted-array/
